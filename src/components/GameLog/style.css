@@ -9,6 +9,10 @@
   top: 0;
 }
 
+#log-display .log-item {
+  margin: 5px 0;
+}
+
 #messages-notification {
   background: lightgrey;
   border-radius: 10px 10px 0 0;
