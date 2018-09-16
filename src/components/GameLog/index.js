@@ -38,6 +38,7 @@ class GameLog extends React.Component {
   }
 
   componentDidMount() {
+    this.scrollToBottom()
     this.display.current.addEventListener('scroll', e => this.onScroll(e))
   }
 
