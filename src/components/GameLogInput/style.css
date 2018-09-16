@@ -1,0 +1,15 @@
+#game-log-input {
+  border: 2px solid #ddd;
+  border-radius: 4px;
+  bottom: 0;
+  font-size: 18px;
+  height: 30px;
+  margin: 20px 40px;
+  padding: 6px 12px;
+  position: fixed;
+  width: calc(100% - 106px);
+}
+
+#game-log-input:focus {
+  outline: none;
+}
