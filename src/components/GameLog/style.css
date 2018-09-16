@@ -1,0 +1,27 @@
+#log-display {
+  bottom: 66px;
+  left: 0;
+  margin-bottom: 20px;
+  overflow-y: scroll;
+  padding: 20px 40px 0 52px;
+  position: fixed;
+  right: 0;
+  top: 0;
+}
+
+#messages-notification {
+  background: lightgrey;
+  border-radius: 10px 10px 0 0;
+  bottom: calc(66px + 20px);
+  font-size: 12px;
+  left: calc(50vw - 90px);
+  line-height: 20px;
+  position: fixed;
+  text-align: center;
+  width: 180px;
+}
+
+#messages-notification > span:hover {
+  cursor: pointer;
+  text-decoration: underline;
+}
