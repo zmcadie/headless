@@ -1,24 +1,34 @@
-import React, { Component } from 'react';
-import GameLog from '../GameLog';
-import GameLogInput from '../GameLogInput';
-import handleMessage from '../../utilities/messageUtils';
+import React, { Component } from 'react'
+import GameLog from '../GameLog'
+import GameLogInput from '../GameLogInput'
+import handleMessage from '../../utilities/messageUtils'
 
-import './style.css';
+import './style.css'
 
 export default class GameDisplay extends Component {
   constructor() {
     super()
     this.state = {
-      log: [
-        { content: "Welcome to Headless!" }, { content: "Just start typing and let the adventure begin..." }, { content: "Welcome to Headless!" }, { content: "Just start typing and let the adventure begin..." }, { content: "Welcome to Headless!" }, { content: "Just start typing and let the adventure begin..." }, { content: "Welcome to Headless!" }, { content: "Just start typing and let the adventure begin..." }, { content: "Welcome to Headless!" }, { content: "Just start typing and let the adventure begin..." }, { content: "Welcome to Headless!" }, { content: "Just start typing and let the adventure begin..." }, { content: "Welcome to Headless!" }, { content: "Just start typing and let the adventure begin..." }, { content: "Welcome to Headless!" }, { content: "Just start typing and let the adventure begin..." }, { content: "Welcome to Headless!" }, { content: "Just start typing and let the adventure begin..." }, { content: "Welcome to Headless!" }, { content: "Just start typing and let the adventure begin..." }, { content: "Welcome to Headless!" }, { content: "Just start typing and let the adventure begin..." }, { content: "Welcome to Headless!" }, { content: "Just start typing and let the adventure begin..." }, { content: "Welcome to Headless!" }, { content: "Just start typing and let the adventure begin..." }, { content: "Welcome to Headless!" }, { content: "Just start typing and let the adventure begin..." }, { content: "Welcome to Headless!" }, { content: "Just start typing and let the adventure begin..." }, { content: "Welcome to Headless!" }, { content: "Just start typing and let the adventure begin..." }, { content: "Welcome to Headless!" }, { content: "Just start typing and let the adventure begin..." }, { content: "Welcome to Headless!" }, { content: "Just start typing and let the adventure begin..." }, { content: "Welcome to Headless!" }, { content: "Just start typing and let the adventure begin..." }, { content: "Welcome to Headless!" }, { content: "Just start typing and let the adventure begin..." }, { content: "Welcome to Headless!" }, { content: "Just start typing and let the adventure begin..." }, { content: "Welcome to Headless!" }, { content: "Just start typing and let the adventure begin..." }, { content: "Welcome to Headless!" }, { content: "Just start typing and let the adventure begin..." }, { content: "Welcome to Headless!" }, { content: "Just start typing and let the adventure begin..." }, { content: "Welcome to Headless!" }, { content: "Just start typing and let the adventure begin..." }, { content: "Welcome to Headless!" }, { content: "Just start typing and let the adventure begin..." }, { content: "Welcome to Headless!" }, { content: "Just start typing and let the adventure begin..." }, { content: "Welcome to Headless!" }, { content: "Just start typing and let the adventure begin..." }, { content: "Welcome to Headless!" }, { content: "Just start typing and let the adventure begin..." }, { content: "Welcome to Headless!" }, { content: "Just start typing and let the adventure begin..." }, { content: "Welcome to Headless!" }, { content: "Just start typing and let the adventure begin..." }, { content: "Welcome to Headless!" }, { content: "Just start typing and let the adventure begin..." }, { content: "Welcome to Headless!" }, { content: "Just start typing and let the adventure begin..." }, { content: "Welcome to Headless!" }, { content: "Just start typing and let the adventure begin..." }, { content: "Welcome to Headless!" }, { content: "Just start typing and let the adventure begin..." }, { content: "Welcome to Headless!" }, { content: "Just start typing and let the adventure begin..." }, { content: "Welcome to Headless!" }, { content: "Just start typing and let the adventure begin..." }, { content: "Welcome to Headless!" }, { content: "Just start typing and let the adventure begin..." }, { content: "Welcome to Headless!" }, { content: "Just start typing and let the adventure begin..." }, { content: "Welcome to Headless!" }, { content: "Just start typing and let the adventure begin..." }, { content: "Welcome to Headless!" }, { content: "Just start typing and let the adventure begin..." }, { content: "Welcome to Headless!" }, { content: "Just start typing and let the adventure begin..." }, { content: "Welcome to Headless!" }, { content: "Just start typing and let the adventure begin..." }, { content: "Welcome to Headless!" }, { content: "Just start typing and let the adventure begin..." }, { content: "Welcome to Headless!" }, { content: "Just start typing and let the adventure begin..." }, { content: "Welcome to Headless!" }, { content: "Just start typing and let the adventure begin..." }, { content: "Welcome to Headless!" }, { content: "Just start typing and let the adventure begin..." }, { content: "Welcome to Headless!" }, { content: "Just start typing and let the adventure begin..." }, { content: "Welcome to Headless!" }, { content: "Just start typing and let the adventure begin..." }, { content: "Welcome to Headless!" }, { content: "Just start typing and let the adventure begin..." }, { content: "Welcome to Headless!" }, { content: "Just start typing and let the adventure begin..." }, { content: "Welcome to Headless!" }, { content: "Just start typing and let the adventure begin..." }, { content: "Welcome to Headless!" }, { content: "Just start typing and let the adventure begin..." }, { content: "Welcome to Headless!" }, { content: "Just start typing and let the adventure begin..." }, { content: "Welcome to Headless!" }, { content: "Just start typing and let the adventure begin..." }, { content: "Welcome to Headless!" }, { content: "Just start typing and let the adventure begin..." }, { content: "Welcome to Headless!" }, { content: "Just start typing and let the adventure begin..." }, { content: "Welcome to Headless!" }, { content: "Just start typing and let the adventure begin..." }, { content: "Welcome to Headless!" }, { content: "Just start typing and let the adventure begin..." }, { content: "Welcome to Headless!" }, { content: "Just start typing and let the adventure begin..." }, { content: "Welcome to Headless!" }, { content: "Just start typing and let the adventure begin..." }, { content: "Welcome to Headless!" }, { content: "Just start typing and let the adventure begin..." }, { content: "Welcome to Headless!" }, { content: "Just start typing and let the adventure begin..." }, 
-      ]
+      log: []
     }
     this.addLogItem = this.addLogItem.bind(this)
   }
 
+  componentDidMount() {
+    fetch(`http://localhost:1268/api/logs/${this.props.match.params.id}`)
+    .then(res => res.json()).then(res => this.setState({log: res.logItems}))
+  }
+
   addLogItem(item) {
     const newMsg = handleMessage(item)
-    this.setState({ log: [...this.state.log, newMsg] })
+    const logItems = [...this.state.log, newMsg]
+    fetch(`http://localhost:1268/api/logs/${this.props.match.params.id}`, {
+      method: "PUT",
+      body: JSON.stringify({logItems}),
+      headers:{
+        'Content-Type': 'application/json'
+      }
+    }).then(res => res.json()).then(res => this.setState({log: res.logItems}))
   }
 
   render() {

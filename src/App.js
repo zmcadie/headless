@@ -8,8 +8,8 @@ class App extends Component {
     return (
       <Router>
         <div>
-          <Route exact path="/" render={() => <Redirect to="/game" />} />
-          <Route path="/game" component={GameDisplay} />
+          <Route exact path="/" render={() => <Redirect to="/game/5b9f42cec1c8e02ef22a07da" />} />
+          <Route path="/game/:id" component={GameDisplay} />
         </div>
       </Router>
     );
