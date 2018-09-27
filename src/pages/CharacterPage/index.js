@@ -52,7 +52,7 @@ const CustomInput = ({ name, formData, onChange, schema, uiSchema }) => {
   const inline = uiSchema["ui:inline"]
   const change = e => {
     const { value, type } = e.target
-    const data = type === "number" && value === "" ? 0 : value
+    const data = type === "number" ? value === "" ? 0 : parseInt(value, 10) : value
     onChange(data)
   }
   return (
@@ -80,9 +80,10 @@ class BaseContainer extends Component {
     this.change = this.change.bind(this)
   }
   change(e, key, f) {
-    const { target: { value } } = e
+    const { target: { value, type } } = e
+    const res = type === "number" ? parseInt(value, 10) : value
     const data = this.state
-    key === "name" ? data[key] = value : data[key][f] = value
+    key === "name" ? data[key] = res : data[key][f] = res
     this.setState(data)
     this.props.onChange(this.state)
   }
@@ -199,9 +200,9 @@ class AbilityContainer extends Component {
     this.change = this.change.bind(this)
   }
   change(e, key) {
-    const { target: { value } } = e
+    const { target: { value, type } } = e
     const data = this.state
-    data[key] = value
+    data[key] = type === "number" ? parseInt(value, 10) : value
     this.setState(data)
     this.props.onChange(this.state)
   }
@@ -456,7 +457,7 @@ class AttacksContainer extends Component {
     const { name, def } = this.props
     const data = this.state.attacks
     const num = data.length
-    if (data.length < 6) for (let i = 0; i < 6 - num; i++) { data.push({name: "", bonus: null, damage: null, type: ""}) }
+    if (data.length < 6) for (let i = 0; i < 6 - num; i++) { data.push({name: "", bonus: null, damage: null, damageType: ""}) }
     const attacks = this.state.attacks.map((atk, i) => {
       const inputs = Object.keys(atk).map(k => (
         <CustomInput
@@ -494,7 +495,7 @@ class GearContainer extends Component {
     this.props.onChange(this.state)
   }
   render() {
-    const { name, formData, schema, uiSchema } = this.props
+    const { name, formData, schema } = this.props
     return (
       <div className="character-gear-container" id={name}>
         <ItemsContainer
@@ -699,7 +700,7 @@ class MagicContainer extends Component {
     this.props.onChange(this.state)
   }
   render() {
-    const { name, formData, schema, registry } = this.props
+    const { name, formData, schema } = this.props
     const spellcastingInputs = Object.keys(this.state.spellcasting).map(k => {
       return (
         <div className={`custom-input-field spellcasting-${k}`} key={`spellcasting-${k}`}>
@@ -844,7 +845,7 @@ const schema = {
         name: { type: "string", title: "Name" },
         bonus: { type: "number", title: "Bonus" },
         damage: { type: "string", title: "Damage" },
-        type: { type: "string", title: "Type" }
+        damageType: { type: "string", title: "Type" }
       }
     },
     spell: {
@@ -1178,11 +1179,43 @@ export default class CharacterPage extends Component {
     this.state = {}
     this.submit = this.submit.bind(this)
     this.onChange = this.onChange.bind(this)
+    this.createCharacter = this.createCharacter.bind(this)
+    this.updateCharacter = this.updateCharacter.bind(this)
+  }
+
+  componentDidMount() {
+    if (this.props.match.params.id !== "new") {
+      fetch(`http://localhost:1268/api/characters/${this.props.match.params.id}`)
+      .then(res => res.json()).then(res => this.setState({character: res}))
+    }
+  }
+
+  updateCharacter(character) {
+    fetch(`http://localhost:1268/api/characters/${this.props.match.params.id}`, {
+      method: "PUT",
+      body: JSON.stringify({character}),
+      headers:{
+        'Content-Type': 'application/json'
+      }
+    }).then(res => res.json()).then(res => this.setState({character: res}))
+  }
+
+  createCharacter(character) {
+    fetch(`http://localhost:1268/api/characters`, {
+      method: "POST",
+      body: JSON.stringify(character),
+      headers:{
+        'Content-Type': 'application/json'
+      }
+    }).then(res => res.json()).then(res => this.props.history.push(`./${res._id}`))
   }
 
   submit(editor) {
     const { formData: character } = editor
-    this.setState({ character })
+    const { match: { params: { id } } } = this.props
+    id === "new"
+      ? this.createCharacter(character)
+      : this.updateCharacter(character)
   }
 
   onChange(editor) {
@@ -1191,7 +1224,6 @@ export default class CharacterPage extends Component {
   }
 
   render() {
-    const { id } = this.props.match.params
     return (
       <div id="character-page">
         <Form
