@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
-import GameLog from '../GameLog'
-import GameLogInput from '../GameLogInput'
+import GameLog from '../../components/GameLog'
+import GameLogInput from '../../components/GameLogInput'
 import handleMessage from '../../utilities/messageUtils'
 
 import './style.css'
