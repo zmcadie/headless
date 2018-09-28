@@ -709,15 +709,15 @@ class SpellsContainer extends Component {
     this.changeSlots = this.changeSlots.bind(this)
   }
   changeSpell(v, i, f) {
-    const data = this.props.formData.spells || []
-    f ? data[i] ? data[i][f] = v : data[i] = {[f]: v} : data[i] = v
-    this.setState({spells: data})
+    const data = this.props.formData
+    f ? data.spells[i] ? data.spells[i][f] = v : data.spells[i] = {[f]: v} : data.spells[i] = v
+    this.setState(data)
     this.props.onChange(data)
   }
   changeSlots(v, k) {
-    const data = this.props.formData.slots
-    data[k] = v
-    this.setState({slots: data})
+    const data = this.props.formData
+    data.slots[k] = v
+    this.setState(data)
     this.props.onChange(data)
   }
   render() {
@@ -1192,6 +1192,7 @@ export default class CharacterPage extends Component {
 
   componentDidMount() {
     if (this.props.match.params.id !== "new") {
+      console.log('get')
       fetch(`http://localhost:1268/api/characters/${this.props.match.params.id}`)
       .then(res => res.json()).then(res => {
         this.setState({character: res})
@@ -1200,6 +1201,7 @@ export default class CharacterPage extends Component {
   }
 
   updateCharacter(character) {
+    console.log('put')
     fetch(`http://localhost:1268/api/characters/${this.props.match.params.id}`, {
       method: "PUT",
       body: JSON.stringify({character}),
@@ -1212,6 +1214,7 @@ export default class CharacterPage extends Component {
   }
 
   createCharacter(character) {
+    console.log('post')
     fetch(`http://localhost:1268/api/characters`, {
       method: "POST",
       body: JSON.stringify(character),
