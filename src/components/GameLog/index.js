@@ -83,7 +83,7 @@ class GameLog extends React.Component {
   }
 
   render() {
-    const formatRegex = /({.+})/g
+    const formatRegex = /({[^{}]+})/g
     const { log } = this.props
     const logItems = log.map(entry => {
       return (
