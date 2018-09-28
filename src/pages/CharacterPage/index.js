@@ -61,7 +61,7 @@ const CustomInput = ({ name, formData, onChange, schema, uiSchema }) => {
         className={`character-${name}-input`}
         id={name}
         name={name}
-        value={formData || ""}
+        value={formData ? formData : formData === 0 ? 0 : ""}
         onChange={change}
         data-lpignore={true}
         autoComplete="nope"
@@ -74,18 +74,15 @@ const CustomInput = ({ name, formData, onChange, schema, uiSchema }) => {
 class BaseContainer extends Component {
   constructor(props) {
     super(props)
-    this.state = {
-      ...props.formData
-    }
     this.change = this.change.bind(this)
   }
   change(e, key, f) {
     const { target: { value, type } } = e
     const res = type === "number" ? parseInt(value, 10) : value
-    const data = this.state
+    const data = this.props.formData
     key === "name" ? data[key] = res : data[key][f] = res
     this.setState(data)
-    this.props.onChange(this.state)
+    this.props.onChange(data)
   }
   render() {
     const { name, formData, schema, uiSchema } = this.props
@@ -134,17 +131,13 @@ class BaseContainer extends Component {
 class StatContainer extends Component {
   constructor(props) {
     super(props)
-    this.state = {
-      ...props.formData
-    }
     this.change = this.change.bind(this)
   }
   change(f, key) {
-    const value = f
-    const data = this.state
-    data[key] = value
+    const data = this.props.formData
+    data[key] = f
     this.setState(data)
-    this.props.onChange(this.state)
+    this.props.onChange(data)
   }
   render() {
     const { name, formData, schema, uiSchema } = this.props
@@ -191,54 +184,43 @@ class StatContainer extends Component {
   }
 }
 
-class AbilityContainer extends Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      ...props.formData
-    }
-    this.change = this.change.bind(this)
-  }
-  change(e, key) {
+const AbilityContainer = ({ name, formData, schema, uiSchema, onChange }) => {
+  const change = (e, key) => {
     const { target: { value, type } } = e
-    const data = this.state
+    const data = formData
     data[key] = type === "number" ? parseInt(value, 10) : value
-    this.setState(data)
-    this.props.onChange(this.state)
+    onChange(data)
   }
-  render() {
-    const { name, formData, schema, uiSchema } = this.props
-    const inputs = Object.keys(formData).map(k => {
-      const title = uiSchema && uiSchema[k] && uiSchema[k]["ui:title"]
-        ? uiSchema[k]["ui:title"]
-        : schema.properties[k].title || k
-      const bonus = Math.floor((this.state[k] - 10) / 2)
-      return (
-        <div className={`custom-input-field ${k}`} key={k}>
-          <div className="ability-score-display">
-            <input
-              className={`character-${k}-input ability-score`}
-              id={`${name}-${k}`}
-              type="number"
-              name={`${name}-${k}`}
-              value={formData[k]}
-              onChange={(e) => this.change(e, k)}
-              data-lpignore={true}
-            />
-            <div className={`character-${k}-bonus ability-bonus`}>
-              {bonus ? `${bonus > 0 ? '+' : ''}${bonus}` : 0}
-            </div>
-          </div>
-          <label htmlFor={`${name}-${k}`}>{title}</label>
-        </div>
-      )}
-    )
+  const inputs = Object.keys(formData).map(k => {
+    const title = uiSchema && uiSchema[k] && uiSchema[k]["ui:title"]
+      ? uiSchema[k]["ui:title"]
+      : schema.properties[k].title || k
+    const bonus = Math.floor((formData[k] - 10) / 2)
     return (
-      <div className="character-abilities-container" id={name}>
-        {inputs}
+      <div className={`custom-input-field ${k}`} key={k}>
+        <div className="ability-score-display">
+          <input
+            className={`character-${k}-input ability-score`}
+            id={`${name}-${k}`}
+            type="number"
+            name={`${name}-${k}`}
+            value={formData[k]}
+            onChange={(e) => change(e, k)}
+            data-lpignore={true}
+          />
+          <div className={`character-${k}-bonus ability-bonus`}>
+            {bonus ? `${bonus > 0 ? '+' : ''}${bonus}` : 0}
+          </div>
+        </div>
+        <label htmlFor={`${name}-${k}`}>{title}</label>
       </div>
-    )
-  }
+    )}
+  )
+  return (
+    <div className="character-abilities-container" id={name}>
+      {inputs}
+    </div>
+  )
 }
 
 class SaveContainer extends Component {
@@ -250,11 +232,11 @@ class SaveContainer extends Component {
     this.change = this.change.bind(this)
   }
   change(e, key, field) {
-    const { target: { value } } = e
-    const data = this.state
-    data[key][field] = value
-    this.setState(data)
-    this.props.onChange(this.state)
+    const { target: { value, type } } = e
+    const data = this.props.formData
+    data[key][field] = type === "number" ? parseInt(value, 10) : value
+    // this.setState(data)
+    this.props.onChange(data)
   }
   render() {
     const { name, formData, schema, uiSchema } = this.props
@@ -298,16 +280,13 @@ class SaveContainer extends Component {
 class CombatContainer extends Component {
   constructor(props) {
     super(props)
-    this.state = {
-      ...props.formData
-    }
     this.change = this.change.bind(this)
   }
   change(f, key) {
-    const data = this.state
+    const data = this.props.formData
     data[key] = f
     this.setState(data)
-    this.props.onChange(this.state)
+    this.props.onChange(data)
   }
   render() {
     const { name, formData, schema, uiSchema, registry } = this.props
@@ -349,21 +328,18 @@ class CombatContainer extends Component {
 class HealthContainer extends Component {
   constructor(props) {
     super(props)
-    this.state = {
-      ...props.formData
-    }
     this.change = this.change.bind(this)
   }
   change(e, key, field) {
-    const { target: { value } } = e
-    const data = this.state
-    data[key][field] = value
+    const { target: { value, type } } = e
+    const data = this.props.formData
+    data[key][field] = type === "number" ? parseInt(value, 10) : value
     this.setState(data)
-    this.props.onChange(this.state)
+    this.props.onChange(data)
   }
   render() {
     const { name, formData, schema } = this.props
-    const hpInputs = Object.keys(this.state.hp).map(k => {
+    const hpInputs = Object.keys(formData.hp).map(k => {
       const title = k
       return (
         <div className={`custom-input-field hp-${k}`} key={k}>
@@ -382,7 +358,7 @@ class HealthContainer extends Component {
         </div>
       )
     })
-    const hdInputs = Object.keys(this.state.hd).map(k => {
+    const hdInputs = Object.keys(formData.hd).map(k => {
       const title = k
       return (
         <div className={`custom-input-field hd-${k}`} key={k}>
@@ -401,11 +377,11 @@ class HealthContainer extends Component {
         </div>
       )
     })
-    const deathSaveInputs = Object.keys(this.state.deathSaves).map(k => {
+    const deathSaveInputs = Object.keys(formData.deathSaves).map(k => {
       const title = k
       const num = formData.deathSaves[k] || 0
       const boolChange = (e) => {
-        const res = {...e}
+        const res = e
         res.target.value = res.target.value
           ? num + 1
           : num - 1
@@ -442,33 +418,32 @@ class HealthContainer extends Component {
 class AttacksContainer extends Component {
   constructor(props) {
     super(props)
-    this.state = {
-      attacks: [...props.formData]
-    }
     this.change = this.change.bind(this)
   }
   change(v, i, k) {
-    const data = this.state.attacks
+    const data = this.props.formData
     data[i][k] = v
     this.setState({attacks: data})
-    this.props.onChange(this.state.attacks)
+    this.props.onChange(data)
   }
   render() {
-    const { name, def } = this.props
-    const data = this.state.attacks
+    const { name, def, formData } = this.props
+    const data = formData
     const num = data.length
-    if (data.length < 6) for (let i = 0; i < 6 - num; i++) { data.push({name: "", bonus: null, damage: null, damageType: ""}) }
-    const attacks = this.state.attacks.map((atk, i) => {
-      const inputs = Object.keys(atk).map(k => (
-        <CustomInput
-          key={`attack-${i}-${k}`}
-          name={`attack-${i}-${k}`}
-          formData={atk[k]}
-          onChange={v => this.change(v, i, k)}
-          schema={def.properties[k]}
-          uiSchema={{}}
-        />
-      ))
+    if (data.length < 6) for (let i = 0; i < 6 - num; i++) { data.push({name: "", bonus: "", damage: "", damageType: ""}) }
+    const attacks = data.map((atk, i) => {
+      const inputs = Object.keys(atk).map(k => {
+        return k === "_id" ? '' : (
+          <CustomInput
+            key={`attack-${i}-${k}`}
+            name={`attack-${i}-${k}`}
+            formData={atk[k]}
+            onChange={v => this.change(v, i, k)}
+            schema={def.properties[k]}
+            uiSchema={{}}
+          />
+       )
+      })
       return <div className="attack-container" key={`attack-${i}`}>{inputs}</div>
     })
     return (
@@ -483,16 +458,13 @@ class AttacksContainer extends Component {
 class GearContainer extends Component {
   constructor(props) {
     super(props)
-    this.state = {
-      ...props.formData
-    }
     this.change = this.change.bind(this)
   }
   change(f, key) {
-    const data = this.state
+    const data = this.props.formData
     data[key] = f
     this.setState(data)
-    this.props.onChange(this.state)
+    this.props.onChange(data)
   }
   render() {
     const { name, formData, schema } = this.props
@@ -500,7 +472,7 @@ class GearContainer extends Component {
       <div className="character-gear-container" id={name}>
         <ItemsContainer
           name="equipment"
-          formData={formData.equipment || []}
+          formData={formData.equipment}
           schema={schema.properties.equipment}
           onChange={f => this.change(f, "equipment")}
           min={16}
@@ -525,21 +497,17 @@ class GearContainer extends Component {
 class ItemsContainer extends Component {
   constructor(props) {
     super(props)
-    this.state = {
-      items: [...props.formData]
-    }
     this.change = this.change.bind(this)
   }
   change(v, i) {
-    const data = this.state.items
+    const data = this.props.formData
     data[i] = v
-    this.setState({items: data})
-    this.props.onChange(this.state.items)
+    this.props.onChange(data)
   }
   render() {
-    const { name, min, schema } = this.props
+    const { name, min, schema, formData } = this.props
     const title = schema.title || name.charAt(0).toUpperCase() + name.slice(1)
-    const data = this.state.items
+    const data = formData
     const num = data.length
     for (let i = 0; i < min - num; i++) { data.push("") }
     const items = data.map((item, index) => {
@@ -566,25 +534,22 @@ class ItemsContainer extends Component {
 class GoldContainer extends Component {
   constructor(props) {
     super(props)
-    this.state = {
-      ...props.formData
-    }
     this.change = this.change.bind(this)
   }
   change(f, k) {
-    const data = this.state
+    const data = this.props.formData
     data[k] = f
     this.setState(data)
-    this.props.onChange(this.state)
+    this.props.onChange(data)
   }
   render() {
-    const { name } = this.props
-    const coins = Object.keys(this.state).map(k => {
+    const { name, formData } = this.props
+    const coins = Object.keys(formData).map(k => {
       return (
         <CustomInput
           key={`${name}-${k}`}
           name={`${name}-${k}`}
-          formData={this.state[k]}
+          formData={formData[k]}
           onChange={f => this.change(f, k)}
           schema={{type: "number", title: k.toUpperCase()}}
           uiSchema={{}}
@@ -602,20 +567,17 @@ class GoldContainer extends Component {
 class InfoContainer extends Component {
   constructor(props) {
     super(props)
-    this.state = {
-      ...props.formData
-    }
     this.change = this.change.bind(this)
   }
   change(form, key, field) {
-    const data = this.state
+    const data = this.props.formData
     field ? data[key][field] = form : data[key] = form
     this.setState(data)
-    this.props.onChange(this.state)
+    this.props.onChange(data)
   }
   render() {
     const { name, formData, schema } = this.props
-    const descriptionInputs = Object.keys(this.state.description).map(k => {
+    const descriptionInputs = Object.keys(formData.description).map(k => {
       return (
         <div className={`custom-input-field description-${k}`} key={`description-${k}`}>
           <input
@@ -632,12 +594,12 @@ class InfoContainer extends Component {
         </div>
       )
     })
-    const characteristics = Object.keys(this.state.characteristics).map(k => {
+    const characteristics = Object.keys(formData.characteristics).map(k => {
       return (
         <ItemsContainer
           key={`characteristics-${k}`}
           name={k}
-          formData={this.state.characteristics[k] || []}
+          formData={formData.characteristics[k] || []}
           schema={schema.properties.characteristics.properties[k]}
           onChange={f => this.change(f, "characteristics", k)}
           min={4}
@@ -651,14 +613,14 @@ class InfoContainer extends Component {
         </div>
         <ItemsContainer
           name="proficiencies"
-          formData={this.state.proficiencies || []}
+          formData={formData.proficiencies || []}
           schema={schema.properties.proficiencies}
           onChange={f => this.change(f, "proficiencies")}
           min={8}
         />
         <ItemsContainer
           name="languages"
-          formData={this.state.languages || []}
+          formData={formData.languages || []}
           schema={schema.properties.languages}
           onChange={f => this.change(f, "languages")}
           min={8}
@@ -668,14 +630,14 @@ class InfoContainer extends Component {
         </div>
         <ItemsContainer
           name="features"
-          formData={this.state.features || []}
+          formData={formData.features || []}
           schema={schema.properties.features}
           onChange={f => this.change(f, "features")}
           min={16}
         />
         <ItemsContainer
           name="allies"
-          formData={this.state.allies || []}
+          formData={formData.allies || []}
           schema={schema.properties.allies}
           onChange={f => this.change(f, "allies")}
           min={10}
@@ -688,20 +650,17 @@ class InfoContainer extends Component {
 class MagicContainer extends Component {
   constructor(props) {
     super(props)
-    this.state = {
-      ...props.formData
-    }
     this.change = this.change.bind(this)
   }
   change(form, key, field) {
-    const data = this.state
+    const data = this.props.formData
     field ? data[key][field] = form : data[key] = form
     this.setState(data)
-    this.props.onChange(this.state)
+    this.props.onChange(data)
   }
   render() {
     const { name, formData, schema } = this.props
-    const spellcastingInputs = Object.keys(this.state.spellcasting).map(k => {
+    const spellcastingInputs = Object.keys(formData.spellcasting).map(k => {
       return (
         <div className={`custom-input-field spellcasting-${k}`} key={`spellcasting-${k}`}>
           <input
@@ -718,13 +677,13 @@ class MagicContainer extends Component {
         </div>
       )
     })
-    const spells = Object.keys(this.state.spells).map(k => {
+    const spells = Object.keys(formData.spells).map(k => {
       const level = k === "0" ? "cantrips" : `level-${k}`
       return (
         <SpellsContainer
           key={`spell-${level}-container`}
           name={level}
-          formData={this.state.spells[k]}
+          formData={formData.spells[k]}
           onChange={f => this.change(f, "spells", k)}
           min={k > 0 && k < 5 ? 13 : 8}
         />
@@ -746,27 +705,24 @@ class MagicContainer extends Component {
 class SpellsContainer extends Component {
   constructor(props) {
     super(props)
-    this.state = {
-      ...props.formData
-    }
     this.changeSpell = this.changeSpell.bind(this)
     this.changeSlots = this.changeSlots.bind(this)
   }
   changeSpell(v, i, f) {
-    const data = this.state.spells || []
+    const data = this.props.formData.spells || []
     f ? data[i] ? data[i][f] = v : data[i] = {[f]: v} : data[i] = v
     this.setState({spells: data})
-    this.props.onChange(this.state)
+    this.props.onChange(data)
   }
   changeSlots(v, k) {
-    const data = this.state.slots
+    const data = this.props.formData.slots
     data[k] = v
     this.setState({slots: data})
-    this.props.onChange(this.state)
+    this.props.onChange(data)
   }
   render() {
-    const { name, min } = this.props
-    const data = this.state.spells || []
+    const { name, min, formData } = this.props
+    const data = formData.spells || []
     const num = data.length
     for (let i = 0; i < min - num; i++) { data.push(name === "cantrips" ? "" : { prepared: false, name: "" }) }
     const items = data.map((item, index) => {
@@ -803,14 +759,14 @@ class SpellsContainer extends Component {
               <div className="spell-slots-container">
                 <CustomInput
                   name={`${name}-slots-total`}
-                  formData={this.state.slots.total}
+                  formData={formData.slots.total}
                   onChange={v => this.changeSlots(v, "total")}
                   schema={{type: "number", title: "Spell Slots"}}
                   uiSchema={{"ui:inline": true}}
                 />
                 <CustomInput
                   name={`${name}-slots-used`}
-                  formData={this.state.slots.used}
+                  formData={formData.slots.used}
                   onChange={v => this.changeSlots(v, "used")}
                   schema={{type: "number", title: "Used"}}
                   uiSchema={{"ui:inline": true}}
@@ -843,7 +799,7 @@ const schema = {
       type: "object",
       properties: {
         name: { type: "string", title: "Name" },
-        bonus: { type: "number", title: "Bonus" },
+        bonus: { type: "string", title: "Bonus" },
         damage: { type: "string", title: "Damage" },
         damageType: { type: "string", title: "Type" }
       }
@@ -1176,7 +1132,58 @@ const fields = {
 export default class CharacterPage extends Component {
   constructor() {
     super()
-    this.state = {}
+    this.state = {
+      character: {
+        base: { name: "", details: { class: "", level: 0, background: "", player: "", race: "", alignment: "", xp: 0 } },
+        stats: {
+          abilities: { str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10 },
+          saves: { str: { proficient: false, bonus: 0 }, dex: { proficient: false, bonus: 0 }, con: { proficient: false, bonus: 0 }, int: { proficient: false, bonus: 0 }, wis: { proficient: false, bonus: 0 }, cha: { proficient: false, bonus: 0 } },
+          skills: {
+            acrobatics: { proficient: false, bonus: 0 },
+            animalHandling: { proficient: false, bonus: 0 },
+            arcana: { proficient: false, bonus: 0 },
+            athletics: { proficient: false, bonus: 0 },
+            deception: { proficient: false, bonus: 0 },
+            history: { proficient: false, bonus: 0 },
+            insight: { proficient: false, bonus: 0 },
+            intimidation: { proficient: false, bonus: 0 },
+            investigation: { proficient: false, bonus: 0 },
+            medicine: { proficient: false, bonus: 0 },
+            nature: { proficient: false, bonus: 0 },
+            perception: { proficient: false, bonus: 0 },
+            performance: { proficient: false, bonus: 0 },
+            persuasion: { proficient: false, bonus: 0 },
+            religion: { proficient: false, bonus: 0 },
+            sleightOfHand: { proficient: false, bonus: 0 },
+            stealth: { proficient: false, bonus: 0 },
+            survival: { proficient: false, bonus: 0 }
+          },
+          inspiration: false,
+          proficiency: 0,
+          passivePerception: 0
+        },
+        combat: {
+          initiative: 0, ac: 0, speed: 0, health: { hp: { max: 0, current: 0, temporary: 0 }, hd: { total: "", used: "" }, deathSaves: { success: 0, failure: 0 } }, attacks: []
+        },
+        gear: { equipment: [], gold: { cp: 0, sp: 0, gp: 0, pp: 0 }, treasure: [] },
+        info: { description: { age: "", height: "", weight: "", eyes: "", skin: "", hair: "" }, characteristics: { traits: [], ideals: [], bonds: [], flaws: [] }, proficiencies: [], languages: [], features: [], allies: [] },
+        magic: {
+          spellcasting: { class: "", ability: "", dc: 0, bonus: 0 },
+          spells: {
+            0: { spells: [] },
+            1: { slots: { total: 0, used: 0 }, spells: [] },
+            2: { slots: { total: 0, used: 0 }, spells: [] },
+            3: { slots: { total: 0, used: 0 }, spells: [] },
+            4: { slots: { total: 0, used: 0 }, spells: [] },
+            5: { slots: { total: 0, used: 0 }, spells: [] },
+            6: { slots: { total: 0, used: 0 }, spells: [] },
+            7: { slots: { total: 0, used: 0 }, spells: [] },
+            8: { slots: { total: 0, used: 0 }, spells: [] },
+            9: { slots: { total: 0, used: 0 }, spells: [] }
+          }
+        }
+      }
+    }
     this.submit = this.submit.bind(this)
     this.onChange = this.onChange.bind(this)
     this.createCharacter = this.createCharacter.bind(this)
@@ -1186,7 +1193,9 @@ export default class CharacterPage extends Component {
   componentDidMount() {
     if (this.props.match.params.id !== "new") {
       fetch(`http://localhost:1268/api/characters/${this.props.match.params.id}`)
-      .then(res => res.json()).then(res => this.setState({character: res}))
+      .then(res => res.json()).then(res => {
+        this.setState({character: res})
+      })
     }
   }
 
@@ -1197,7 +1206,9 @@ export default class CharacterPage extends Component {
       headers:{
         'Content-Type': 'application/json'
       }
-    }).then(res => res.json()).then(res => this.setState({character: res}))
+    }).then(res => res.json()).then(res => {
+      this.setState({character: res})
+    })
   }
 
   createCharacter(character) {
@@ -1210,8 +1221,8 @@ export default class CharacterPage extends Component {
     }).then(res => res.json()).then(res => this.props.history.push(`./${res._id}`))
   }
 
-  submit(editor) {
-    const { formData: character } = editor
+  submit() {
+    const { character } = this.state
     const { match: { params: { id } } } = this.props
     id === "new"
       ? this.createCharacter(character)
