@@ -654,7 +654,9 @@ class MagicContainer extends Component {
   }
   change(form, key, field) {
     const data = this.props.formData
-    field ? data[key][field] = form : data[key] = form
+    const type = this.props.schema.properties[key].properties[field].type
+    const value = type === "number" ? parseInt(form, 10) : form
+    field ? data[key][field] = value : data[key] = value
     this.setState(data)
     this.props.onChange(data)
   }
