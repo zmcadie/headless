@@ -663,19 +663,21 @@ class MagicContainer extends Component {
   render() {
     const { name, formData, schema } = this.props
     const spellcastingInputs = Object.keys(formData.spellcasting).map(k => {
+      const { type, title } = schema.properties.spellcasting.properties[k]
+      const value = formData.spellcasting[k]
       return (
         <div className={`custom-input-field spellcasting-${k}`} key={`spellcasting-${k}`}>
           <input
             className={`character-spellcasting-${k}-input`}
             id={`spellcasting-${k}`}
-            type={schema.properties.spellcasting.properties[k]}
+            type={type}
             name={`spellcasting-${k}`}
-            value={formData.spellcasting[k]}
+            value={value ? value : type === "number" ? 0 : ""}
             onChange={e => this.change(e.target.value, "spellcasting", k)}
             data-lpignore={true}
             autoComplete="none"
           />
-          <label htmlFor={`spellcasting-${k}`}>{schema.properties.spellcasting.properties[k].title || k}</label>
+          <label htmlFor={`spellcasting-${k}`}>{title || k}</label>
         </div>
       )
     })
