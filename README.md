@@ -4,6 +4,8 @@ A work-in-progress site that seeks to help facilitate storytelling games with a 
 
 The project currently includes a game log that acts as a simple record of content and has built in commands for rolling dice (eg. `{4d6+3}` to roll 4 six-sided die and add 3 to the total). The project also includes a character section that currently supports interactive DnD 5th edition character sheets.
 
+The project leverages a custom API to interact with MongoDB instance hosted on mLab. The API can be viewed at https://github.com/zmcadie/headless-api/
+
 ## Intended features
 
 - User accounts and tying games and characters to a creating user
