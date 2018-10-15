@@ -15,7 +15,26 @@ export default class GameDisplay extends Component {
   }
 
   componentDidMount() {
-    fetch(`http://localhost:1268/api/logs/${this.props.match.params.id}`)
+    const { match: { params: { id } } } = this.props
+    if (id === "new") {
+      fetch(`http://localhost:1268/api/logs`, {
+        method: "POST",
+        body: JSON.stringify([]),
+        headers:{
+          'Content-Type': 'application/json'
+        }
+      }).then(res => res.json()).then(res => this.props.history.push(`./${res._id}`))
+    } else {
+      this.loadLogItems(id)
+    }
+  }
+
+  createNewLog() {
+
+  }
+
+  loadLogItems(id) {
+    fetch(`http://localhost:1268/api/logs/${id}`)
     .then(res => res.json()).then(res => this.setState({log: res.logItems}))
   }
 
