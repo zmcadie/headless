@@ -1,0 +1,24 @@
+{
+  "type": "object",
+  "properties": {
+    "base": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "title": "Character Name" },
+        "details": {
+          "title": "Character Details",
+          "type": "object",
+          "properties": {
+            "class": { "type": "string", "title": "Class" },
+            "level": { "type": "number", "title": "Level" },
+            "background": { "type": "string", "title": "Background" },
+            "player": { "type": "string", "title": "Player Name" },
+            "race": { "type": "string", "title": "Race" },
+            "alignment": { "type": "string", "title": "Alignment" },
+            "xp": { "type": "number", "title": "Experience Points" }
+          }
+        }
+      }
+    }
+  }
+}

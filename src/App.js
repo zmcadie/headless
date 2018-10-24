@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom';
 import GameDisplay from './pages/GameDisplay';
-import CharacterPage from './pages/CharacterPage';
+import CharacterPage from './pages/CharacterPageNew';
 import './App.css';
 
 class App extends Component {
