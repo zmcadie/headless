@@ -57,12 +57,17 @@
         "race": { "type": "string", "title": "Race" },
         "alignment": { "type": "string", "title": "Alignment" },
         "xp": { "type": "number", "title": "Experience Points" },
-        "str": { "type": "number", "title": "STR" },
-        "dex": { "type": "number", "title": "DEX" },
-        "con": { "type": "number", "title": "CON" },
-        "int": { "type": "number", "title": "INT" },
-        "wis": { "type": "number", "title": "WIS" },
-        "cha": { "type": "number", "title": "CHA" },
+        "abilities": {
+          "type": "object",
+          "properties":{
+            "str": { "type": "number", "title": "STR" },
+            "dex": { "type": "number", "title": "DEX" },
+            "con": { "type": "number", "title": "CON" },
+            "int": { "type": "number", "title": "INT" },
+            "wis": { "type": "number", "title": "WIS" },
+            "cha": { "type": "number", "title": "CHA" }
+          }
+        },
         "saves": {
           "title": "Saving Throws",
           "type": "object",
