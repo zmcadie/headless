@@ -786,60 +786,35 @@ class SpellsContainer extends Component {
   }
 }
 
-// const uiSchema = {
-//   classNames: "character-sheet",
-//   base: {
-//     "ui:title": false,
-//     "ui:field": "baseContainer",
-//     classNames: "character-base"
-//   },
-//   stats: {
-//     "ui:title": false,
-//     "ui:field": "statContainer",
-//     classNames: "character-stats",
-//     skills: {
-//       acrobatics: { "ui:title": "Acrobatics\xa0\xa0(Dex)" },
-//       animalHandling: { "ui:title": "Animal Handling\xa0\xa0(Wis)" },
-//       arcana: { "ui:title": "Arcana\xa0\xa0(Int)" },
-//       athletics: { "ui:title": "Athletics\xa0\xa0(Str)" },
-//       deception: { "ui:title": "Deception\xa0\xa0(Cha)" },
-//       history: { "ui:title": "History\xa0\xa0(Int)" },
-//       insight: { "ui:title": "Insight\xa0\xa0(Wis)" },
-//       intimidation: { "ui:title": "Intimidation\xa0\xa0(Cha)" },
-//       investigation: { "ui:title": "Investigation\xa0\xa0(Int)" },
-//       medicine: { "ui:title": "Medicine\xa0\xa0(Wis)" },
-//       nature: { "ui:title": "Nature\xa0\xa0(Int)" },
-//       perception: { "ui:title": "Perception\xa0\xa0(Wis)" },
-//       performance: { "ui:title": "Performance\xa0\xa0(Cha)" },
-//       persuasion: { "ui:title": "Persuasion\xa0\xa0(Cha)" },
-//       religion: { "ui:title": "Religion\xa0\xa0(Int)" },
-//       sleightOfHand: { "ui:title": "Sleight of Hand\xa0\xa0(Dex)" },
-//       stealth: { "ui:title": "Stealth\xa0\xa0(Dex)" },
-//       survival: { "ui:title": "Survival\xa0\xa0(Wis)" }
-//     },
-//     inspiration: { "ui:inline": true },
-//     proficiency: { "ui:inline": true },
-//     passivePerception: { "ui:inline": true }
-//   },
-//   combat: {
-//     "ui:title": false,
-//     "ui:field": "combatContainer",
-//     classNames: "character-combat",
-//   },
-//   gear: {
-//     "ui:title": false,
-//     "ui:field": "gearContainer",
-//     classNames: "character-gear"
-//   },
-//   info: {
-//     "ui:field": "infoContainer",
-//     classNames: "character-info"
-//   },
-//   magic: {
-//     "ui:field": "magicContainer",
-//     classNames: "character-magic"
-//   }
-// }
+const uiSchema = {
+  classNames: "character-sheet",
+  stats: {
+    "ui:title": false,
+    skills: {
+      acrobatics: { "ui:title": "Acrobatics\xa0\xa0(Dex)" },
+      animalHandling: { "ui:title": "Animal Handling\xa0\xa0(Wis)" },
+      arcana: { "ui:title": "Arcana\xa0\xa0(Int)" },
+      athletics: { "ui:title": "Athletics\xa0\xa0(Str)" },
+      deception: { "ui:title": "Deception\xa0\xa0(Cha)" },
+      history: { "ui:title": "History\xa0\xa0(Int)" },
+      insight: { "ui:title": "Insight\xa0\xa0(Wis)" },
+      intimidation: { "ui:title": "Intimidation\xa0\xa0(Cha)" },
+      investigation: { "ui:title": "Investigation\xa0\xa0(Int)" },
+      medicine: { "ui:title": "Medicine\xa0\xa0(Wis)" },
+      nature: { "ui:title": "Nature\xa0\xa0(Int)" },
+      perception: { "ui:title": "Perception\xa0\xa0(Wis)" },
+      performance: { "ui:title": "Performance\xa0\xa0(Cha)" },
+      persuasion: { "ui:title": "Persuasion\xa0\xa0(Cha)" },
+      religion: { "ui:title": "Religion\xa0\xa0(Int)" },
+      sleightOfHand: { "ui:title": "Sleight of Hand\xa0\xa0(Dex)" },
+      stealth: { "ui:title": "Stealth\xa0\xa0(Dex)" },
+      survival: { "ui:title": "Survival\xa0\xa0(Wis)" }
+    },
+    inspiration: { "ui:inline": true },
+    proficiency: { "ui:inline": true },
+    passivePerception: { "ui:inline": true }
+  }
+}
 
 const fields = {
   baseContainer: BaseContainer,
@@ -963,7 +938,7 @@ export default class CharacterPage extends Component {
       <div id="character-page">
         <Form
           schema={schema}
-          // uiSchema={uiSchema}
+          uiSchema={uiSchema}
           formData={this.state.character}
           onChange={this.onChange}
           onSubmit={this.submit}
