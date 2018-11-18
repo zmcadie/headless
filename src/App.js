@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom';
 import GameDisplay from './pages/GameDisplay';
-import CharacterPage from './pages/CharacterPageNew';
+import CharacterPage from './pages/CharacterPage';
+import NewCharacterPage from './pages/CharacterPageNew';
 import './App.css';
 
 class App extends Component {
@@ -13,6 +14,7 @@ class App extends Component {
           <Route path="/game/:id" component={GameDisplay} />
           <Route exact path="/character" render={() => <Redirect to="/character/new" />} />
           <Route path="/character/:id" component={CharacterPage} />
+          <Route path="/newcharacter" component={NewCharacterPage} />
         </div>
       </Router>
     );

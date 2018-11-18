@@ -32,6 +32,54 @@ const ObjectFieldTemplate = ({ TitleField, properties, title, uiSchema }) => {
   )
 }
 
+const CustomFieldTemplate = (p) => {
+  return (
+    <div className={p.classNames}>
+      {p.children}
+    </div>
+  );
+}
+
+const inputTypes = {
+  string: (p) => <input type="text" {...p} />,
+  boolean: (p) => <BooleanInput {...p} />,
+  number: (p) => <input type="number" {...p} />
+}
+
+const CustomInput = ({ name, formData, onChange, schema, uiSchema }) => {
+  const { type, title } = schema
+  const inputTitle = uiSchema
+    ? uiSchema["ui:title"] === false
+      ? ''
+      : uiSchema["ui:title"]
+        ? uiSchema["ui:title"]
+        : title
+          ? title
+          : name
+    : name
+  const Input = inputTypes[type]
+  const inline = uiSchema["ui:inline"]
+  const change = e => {
+    const { value, type } = e.target
+    const data = type === "number" ? value === "" ? 0 : parseInt(value, 10) : value
+    onChange(data)
+  }
+  return (
+    <div className={`custom-input-field ${name} ${inline ? 'inline' : ''}`}>
+      <Input
+        className={`character-${name}-input`}
+        id={name}
+        name={name}
+        value={formData ? formData : formData === 0 ? 0 : ""}
+        onChange={change}
+        data-lpignore={true}
+        autoComplete="off"
+      />
+      <label htmlFor={name}>{inputTitle}</label>
+    </div>
+  )
+}
+
 const AbilitiesContainer = ({ name, formData, schema, uiSchema, onChange }) => {
   const change = (e, key) => {
     const { target: { value, type } } = e
@@ -126,16 +174,28 @@ class SaveContainer extends Component {
 }
 
 const uiSchema = {
-  classNames: "character-sheet",
+  classNames: "character-sheet-new",
   stats: {
     "ui:title": false,
+    classNames: "stats",
+    name: { classNames: "name" },
+    class: { classNames: "class" },
+    level: { classNames: "level" },
+    background: { classNames: "background" },
+    player: { classNames: "player" },
+    race: { classNames: "race" },
+    alignment: { classNames: "alignment" },
+    xp: { classNames: "xp" },
     abilities: {
+      classNames: "abilities",
       "ui:field": "abilitiesContainer",
     },
     saves: {
+      classNames: "saves",
       "ui:field": "saveContainer"
     },
     skills: {
+      classNames: "skills",
       "ui:field": "saveContainer",
       acrobatics: { "ui:title": "Acrobatics\xa0\xa0(Dex)" },
       animalHandling: { "ui:title": "Animal Handling\xa0\xa0(Wis)" },
@@ -156,18 +216,49 @@ const uiSchema = {
       stealth: { "ui:title": "Stealth\xa0\xa0(Dex)" },
       survival: { "ui:title": "Survival\xa0\xa0(Wis)" }
     },
-    inspiration: { "ui:inline": true },
-    proficiency: { "ui:inline": true },
-    passivePerception: { "ui:inline": true }
+    inspiration: {
+      classNames: "inspiration",
+      "ui:inline": true
+    },
+    proficiency: {
+      classNames: "proficiency",
+      "ui:inline": true
+    },
+    passivePerception: {
+      classNames: "passivePerception",
+      "ui:inline": true
+    },
+    initiative: {
+      classNames: "initiative",
+    },
+    ac: {
+      classNames: "ac",
+    },
+    speed: {
+      classNames: "speed",
+    },
+    hp: {
+      classNames: "hp",
+    },
+    hd: {
+      classNames: "hd",
+    },
+    deathSaves: {
+      classNames: "deathSaves",
+    }
   }
 }
 
 const fields = {
   abilitiesContainer: AbilitiesContainer,
-  saveContainer: SaveContainer
+  saveContainer: SaveContainer,
+  custom: CustomInput,
+  StringField: CustomInput,
+  NumberField: CustomInput,
+  BooleanField: CustomInput
 }
 
-export default class CharacterPage extends Component {
+export default class NewCharacterPage extends Component {
   constructor() {
     super()
     this.state = {
@@ -233,16 +324,16 @@ export default class CharacterPage extends Component {
 
   componentDidMount() {
     if (this.props.match.params.id !== "new") {
-      console.log('get')
-      fetch(`http://localhost:1268/api/characters/${this.props.match.params.id}`)
-      .then(res => res.json()).then(res => {
-        this.setState({character: res})
-      })
+      console.log('get', this.state.character)
+    //   fetch(`http://localhost:1268/api/characters/${this.props.match.params.id}`)
+    //   .then(res => res.json()).then(res => {
+    //     this.setState({character: res})
+    //   })
     }
   }
 
   updateCharacter(character) {
-    console.log('put')
+    console.log('put', this.state.character)
     // fetch(`http://localhost:1268/api/characters/${this.props.match.params.id}`, {
     //   method: "PUT",
     //   body: JSON.stringify({character}),
@@ -255,7 +346,7 @@ export default class CharacterPage extends Component {
   }
 
   createCharacter(character) {
-    console.log('post')
+    console.log('post', this.state.character)
     // fetch(`http://localhost:1268/api/characters`, {
     //   method: "POST",
     //   body: JSON.stringify(character),
@@ -288,6 +379,7 @@ export default class CharacterPage extends Component {
           onChange={this.onChange}
           onSubmit={this.submit}
           fields={fields}
+          FieldTemplate={CustomFieldTemplate}
           ObjectFieldTemplate={ObjectFieldTemplate}
           showErrorList={false}
         >
