@@ -9,7 +9,7 @@ class App extends Component {
     return (
       <Router>
         <div>
-          <Route exact path="/" render={() => <Redirect to="/game/5b9f42cec1c8e02ef22a07da" />} />
+          <Route exact path="/" render={() => <Redirect to="/character/new" />} />
           <Route path="/game/:id" component={GameDisplay} />
           <Route exact path="/character" render={() => <Redirect to="/character/new" />} />
           <Route path="/character/:id" component={CharacterPage} />
