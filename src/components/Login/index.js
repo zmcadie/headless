@@ -30,7 +30,7 @@ const submit = user => {
   }).then(res => console.log(res))
 }
 
-const Login = ({ onSubmit }) => {
+const Login = () => {
   return (
     <Form
       schema={loginSchema}
