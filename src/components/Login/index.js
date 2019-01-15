@@ -18,24 +18,12 @@ const loginUiSchema = {
   password: { "ui:widget": "password" }
 }
 
-const submit = user => {
-  fetch(`http://localhost:1268/api/user/login`, {
-    method: "POST",
-    body: JSON.stringify(user),
-    headers:{
-      'Content-Type': 'application/json'
-    }
-  }).then(res => {
-    return res.json()
-  }).then(res => console.log(res))
-}
-
-const Login = () => {
+const Login = ({ onSubmit }) => {
   return (
     <Form
       schema={loginSchema}
       uiSchema={loginUiSchema}
-      onSubmit={e => submit(e.formData)}
+      onSubmit={e => onSubmit(e.formData)}
     />
   )
 }
