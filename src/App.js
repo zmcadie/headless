@@ -32,16 +32,21 @@ class App extends Component {
   render() {
     return (
       <Router>
-        <div id="router-container">
-          <div id="app-header">{`${this.state.user.username}`}</div>
-          <LoadingIcon />
-          <Route exact path="/" render={() => <Redirect to="/login" />} />
-          <Route path="/login" component={LoginPage} />
-          <Route path="/logout" component={Logout} />
-          <Route path="/signup" component={Signup} />
-          <Route path="/game/:id" component={GameDisplay} />
-          <Route exact path="/character" render={() => <Redirect to="/character/new" />} />
-          <Route path="/character/:id" component={CharacterPage} />
+        <div id="app-container">
+          { this.state.isLoading
+            ? <LoadingIcon />
+            : (
+              <div id="router-container">
+                <Route exact path="/" render={() => <Redirect to="/login" />} />
+                <Route path="/login" component={LoginPage} />
+                <Route path="/logout" component={Logout} />
+                <Route path="/signup" component={Signup} />
+                <Route path="/game/:id" component={GameDisplay} />
+                <Route exact path="/character" render={() => <Redirect to="/character/new" />} />
+                <Route path="/character/:id" component={CharacterPage} />
+              </div>
+            )
+          }
         </div>
       </Router>
     );
